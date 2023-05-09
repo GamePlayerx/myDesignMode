@@ -1,4 +1,4 @@
-package com.xcc.designmode.DODE1_工厂模式;
+package com.xcc.designmode.DMA1_工厂模式;
 
 /**
  * fruits实现Food接口

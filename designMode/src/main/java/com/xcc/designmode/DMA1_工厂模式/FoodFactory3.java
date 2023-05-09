@@ -1,4 +1,4 @@
-package com.xcc.designmode.DODE1_工厂模式;
+package com.xcc.designmode.DMA1_工厂模式;
 
 /**
  * 静态工厂模式，无需创建工厂类实例
