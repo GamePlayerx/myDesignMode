@@ -233,6 +233,15 @@ public class QuickSortDemo {
         return mark;
     }
 
+    /**
+     * 非递归方式,引入了一个存储Map类型元素的栈，用于存储每一次交换的起始下标和结束下标。
+     * 每一次循环，都会让栈顶元素出栈，通过partition3方法进行分治，并且
+     * 按照基准元素的位置分成左右两部分，左右两部分在分别入栈。
+     * 当栈为空时，说明排序已经完毕，退出循环。
+     * @param arr
+     * @param startIndex
+     * @param endIndex
+     */
     public static void quickSort3(int[] arr, int startIndex, int endIndex) {
         // 用一个集合栈来代替递归的函数栈
         Stack<Map<String, Integer>> quickSortStack = new Stack<Map<String, Integer>>();
