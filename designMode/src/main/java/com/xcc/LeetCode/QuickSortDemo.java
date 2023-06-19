@@ -118,10 +118,100 @@ public class QuickSortDemo {
         quickSort1(arr, pivotIndex + 1, endIndex);
     }
 
+    /** 单边循环法
+     * 一个数列，要将其从小到大进行排序。
+     * 4        7       3      5       6       2       8       1
+     * 首先选定基准元素pivot。同时，设置一个mark指针指向数列起始位置，这mark指针代表小于基准元素的区域边界。
+     * pivot=4
+     * 4        7       3      5       6       2       8       1
+     * mark
+     * 接下来，从基准元素的下一个位置开始遍历数组。
+     * 如果遍历到的元素大于基准元素，就继续往后遍历。
+     * 如果遍历到的元素小于基准元素，则需要做两件事：
+     * 第一，把mark指针右移1为，因为小于pivot的区域边界增大了1；
+     * 第二，让最新遍历到的元素和mark指针所在位置的元素交换位置，因为最新遍历的元素归属于小于pivot的区域。
+     *
+     * 首先遍历到元素7，7>4，所以继续遍历.
+     * pivot=4
+     * 4        7       3      5       6       2       8       1
+     * mark
+     * 接下来遍历到的元素是3，3<4，所以mark指针右移1位。
+     * pivot=4
+     * 4        7       3      5       6       2       8       1
+     *         mark
+     * 随后，让元素3和mark指针所在位置的元素交换，因为元素3归属于小于pivot的区域。
+     * pivot=4
+     * 4        3       7      5       6       2       8       1
+     *         mark
+     * 按这个思路，继续遍历：
+     * pivot=4      （5>4,继续遍历）
+     * 4        3       7      5       6       2       8       1
+     *         mark
+     * pivot=4      （6>4,继续遍历）
+     * 4        3       7      5       6       2       8       1
+     *         mark
+     * pivot=4      （2<4,mark指针有移）
+     * 4        3       7      5       6       2       8       1
+     *                 mark
+     * pivot=4      （元素2和mark指针所在位置的元素交换，因为元素2归属于小于pivot的区域）
+     * 4        3       2      5       6       7       8       1
+     *                 mark
+     * pivot=4      （8>4,继续遍历）
+     * 4        3       2      5       6       7       8       1
+     *                 mark
+     * pivot=4      （1<4,mark指针右移）
+     * 4        3       2      5       6       7       8       1
+     *                        mark
+     * pivot=4      （元素1和mark指针所在位置的元素交换，因为元素1归属于小于pivot的区域）
+     * 4        3       2      1       6       7       8       5
+     *                        mark
+     * pivot=4      （最后把pivot元素交换到mark指针所在位置，这一轮结束）
+     * 1        3       2      4       6       7       8       5
+     *                        mark
+     *
+     * @param arr           待交换的数组
+     * @param startIndex    起始下标
+     * @param endIndex      结束下标
+     */
+    private static int partition2(int[] arr, int startIndex, int endIndex) {
+        // 取第1个位置（也可以选择随机位置）的元素作为基准元素
+        int pivot = arr[startIndex];
+        int mark = startIndex;
+
+        for (int i = startIndex + 1; i <= endIndex; i++) {
+            if (arr[i] < pivot) {
+                mark ++;
+                int p = arr[mark];
+                arr[mark] = arr[i];
+                arr[i] = p;
+            }
+        }
+
+        arr[startIndex] = arr[mark];
+        arr[mark] = pivot;
+        return mark;
+    }
+
+    public static void quickSort2(int[] arr, int startIndex, int endIndex) {
+        // 递归结束条件: startIndex大于或等于endIndex时
+        if (startIndex >= endIndex) {
+            return;
+        }
+        // 得到基准元素位置
+        int pivotIndex = partition2(arr, startIndex, endIndex);
+        // 根据基准元素，分成两部分进行递归排序
+        quickSort2(arr, startIndex, pivotIndex - 1);
+        quickSort2(arr, pivotIndex + 1, endIndex);
+    }
+
     public static void main(String[] args) {
         int[] arr1 = new int[] {4,7,6,5,3,2,8,1};
         quickSort1(arr1,0, arr1.length-1);
         System.out.println(Arrays.toString(arr1));
+
+        int[] arr2 = new int[] {4,7,3,5,6,2,8,1};
+        quickSort2(arr2, 0, arr2.length-1);
+        System.out.println(Arrays.toString(arr2));
     }
 
 }
