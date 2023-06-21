@@ -141,7 +141,6 @@ public class CountSortDemo2 {
         int[] array = new int[]{95,94,91,98,99,90,99,93,91,92};
         int[] sortedArray = countSort(array);
         System.out.println(Arrays.toString(sortedArray));
-
     }
 
     /** 小结
