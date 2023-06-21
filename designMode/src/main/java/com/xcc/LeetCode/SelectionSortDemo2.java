@@ -2,7 +2,7 @@ package com.xcc.LeetCode;
 
 import java.util.Arrays;
 
-public class SelectioNSortDemo2 {
+public class SelectionSortDemo2 {
 
     /**
      * 选择排序（从大到小）
