@@ -1,4 +1,4 @@
-package com.xcc.designmode.no2.FactorMethodMode;
+package com.xcc.designmode.no3.AbstractFactoryPattern;
 
 /**
  * @Author GamePlayer-Joker
@@ -6,7 +6,7 @@ package com.xcc.designmode.no2.FactorMethodMode;
  */
 public class FactoryImpl implements Factory{
     @Override
-    public Fruit create(Class s) {
+    public Fruit created(Class s) {
         try {
             return (Fruit) s.newInstance();
         } catch (Exception e) {
