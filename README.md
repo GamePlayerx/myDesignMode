@@ -178,13 +178,246 @@ public class MainClass {
 + 4、具体产品（Concrete Product）角色的抽象模式所创建的具体实例对象的总结抽象工厂中方法对应产品结构，具体工厂对应产品族。
 
 实例<br>
+Fruit接口<br>
+```java
+public interface Fruit {
+    public void get();
+}
+```
+Apple、Banana<br>
+```java
+public class Apple implements Fruit{
+    @Override
+    public void get() {
+        System.out.println("还是苹果好吃！");
+    }
+}
 
+public class Banana implements Fruit{
+    @Override
+    public void get() {
+        System.out.println("香蕉味道还行！");
+    }
+}
+```
+Factory工厂接口<br>
+```java
+public interface Factory {
+    Fruit created(Class s);
+}
+```
+不同的实现类<br>
+```java
+public class FactoryBeijingImpl implements Factory{
+    @Override
+    public Fruit created(Class s) {
+        System.out.println("北京工厂！");
+        try {
+            return (Fruit) s.newInstance();
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+}
 
+public class FactoryShanghaiImpl implements Factory{
+    @Override
+    public Fruit created(Class s) {
+        System.out.println("上海工厂！");
+        try {
+            return (Fruit) s.newInstance();
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+}
+```
+测试<br>
+```java
+public class MainClass {
+    public static void main(String[] args) {
+        Factory shanghaiFactory = new FactoryShanghaiImpl();
+        Factory beijingFactory = new FactoryBeijingImpl();
 
+        Fruit apple = shanghaiFactory.created(Apple.class);
+        apple.get();
 
+        Fruit banana = beijingFactory.created(Banana.class);
+        banana.get();
+    }
+}
+```
 
+## 4、单例模式
 
+### 声明是单例模式
 
+单例模式（Singleton Pattern）是Java中最简单的设计模式之一。这种类型的模式属于创建型模式，
+它提供了一种创建对象的最佳方式。这种模式涉及到一个单一的类，该类负责创建自己的对象，同时确保
+只有单个对象被创建。这个类提供了一种访问其唯一的对象的方式，可以直接访问，不需要实例化该类的对象。
+
+注意：<br>
++ 1、单例类只能有一个实例。
++ 2、单例类必须自己创建自己的唯一实例。
++ 3、单例类必须给所有其他对象提供这一实例。
+
+### 单例模式分类
++ 1、饿汉式
++ 2、懒汉式
+
+Phone类<br>
+```java
+public class Phone {
+    public void get() {
+        System.out.println("RedmiK70Pro");
+    }
+}
+```
+
+饿汉式<br>
+```java
+public class Singleton01 {
+    // 创建一个私有属性  静态
+    private static Phone phone = new Phone();
+
+    public static Phone getPhone() {
+        return phone;
+    }
+}
+```
+懒汉式<br>
+```java
+public class Singleton02 {
+    // 创建一个私有属性  静态
+    private static Phone phone = null;
+
+    // 如果为null 那么进去创建一个新对象 并赋值给phone
+    public static Phone getPhone() {
+        if (phone == null) {
+            phone = new Phone();
+        }
+        return phone;
+    }
+}
+```
+
+### 多种实现方式
+
+#### 懒汉式，线程不安全
+**是否Lazy初始化**：是<br>
+**是否多线程安全**：否<br>
+**实现难度**：易<br>
+**描述**：这种方式是最进步的实现方式，这种实现最大的问题角色不支持多线程。因为没有加锁synchronized,
+所以严格意义上它并不算单例模式。这种方式lazy loading很明显，不要求线程安全，在多线程不能正常工作。<br>
+```java
+public class Singleton03 {
+    private static Singleton03 instance;
+    private Singleton03() {}
+
+    public static Singleton03 getInstance() {
+        if (instance == null) {
+            instance = new Singleton03();
+        }
+        return instance;
+    }
+}
+```
+
+#### 懒汉式，线程安全
+**是否Lazy初始化**：是<br>
+**是否多线程安全**：是<br>
+**实现难度**：易<br>
+**描述**：这种方式具备很好的lazy loading，能够在多线程中很好的工作，但是，效率很低，99%情况下不需要同步。<br>
+优点：第一次调用才初始化，避免内存浪费<br>
+缺点：必须加锁synchronized才能保证单例，但加锁会影响效率。<br>
+getInstance()的性能对应程序不是很关键（该方法使用不能太频繁）。<br>
+```java
+public class Singleton04 {
+    private static Singleton04 instance;
+    private Singleton04() {}
+
+    public static synchronized Singleton04 getInstance() {
+        if (instance == null) {
+            instance = new Singleton04();
+        }
+        return instance;
+    }
+}
+```
+#### 饿汉式
+**是否Lazy初始化**：否<br>
+**是否多线程安全**：是<br>
+**实现难度**：易<br>
+**描述**：这种方式比较常用，但容易产生垃圾对象。<br>
+优点：没有加锁，执行效率会提高。<br>
+缺点：类加载时就初始化，浪费内存。<br>
+它基于classloader机制避免了多线程的同步问题，不过，instance在类装载时就实例化，
+虽然导致类装载的原因有很多种，在单例模式种大多数都是调用getInstance方法，但是有不能确定有其他
+的方式（或者其他的静态方法）导致类装载，这时候初始化instance显然没有达到lazy loading的效果。<br>
+```java
+public class Singleton05 {
+    private static Singleton05 instance = new Singleton05();
+    private Singleton05() {}
+    public static Singleton05 getInstance() {
+        return instance;
+    }
+}
+```
+#### 双检锁/双重校验锁（DCL，即double-checked locking）
+**是否Lazy初始化**：是<br>
+**是否多线程安全**：是<br>
+**实现难度**：较复杂<br>
+**描述**：这种方式采用双锁机制，安全且在多线程情况下能保持高性能。<br>
+getInstance()的性能对应用程序很关键。<br>
+```java
+public class Singleton06 {
+    private volatile static Singleton06 singleton06;
+    private Singleton06() {}
+    public static Singleton06 getSingleton06() {
+        if (singleton06 == null) {
+            synchronized (Singleton06.class) {
+                if (singleton06 == null) {
+                    singleton06 = new Singleton06();
+                }
+            }
+        }
+        return singleton06;
+    }
+}
+```
+#### 登记式/静态内部类
+**是否Lazy初始化**：是<br>
+**是否多线程安全**：是<br>
+**实现难度**：一般<br>
+**描述**：这种方式能达到双检锁方式一样的功效，但实现更简单。对静态域使用延迟初始化，
+应使用这种方式而不是双检锁方式。这种方式只适用于静态域的情况，双检锁方式可在实例域需要延迟初始化时使用。
+这种方式同样利用了 classloader 机制来保证初始化 instance 时只有一个线程，
+它跟第 3 种方式不同的是：第 3 种方式只要 Singleton 类被装载了，那么 instance 
+就会被实例化（没有达到 lazy loading 效果），而这种方式是 Singleton 类被装载了，
+instance 不一定被初始化。因为 SingletonHolder 类没有被主动使用，
+只有通过显式调用 getInstance 方法时，才会显式装载 SingletonHolder 类，
+从而实例化 instance。想象一下，如果实例化 instance 很消耗资源，所以想让它延迟加载，
+另外一方面，又不希望在 Singleton 类加载时就实例化，因为不能确保 Singleton 类还可能在其他
+的地方被主动使用从而被加载，那么这个时候实例化 instance 显然是不合适的。这个时候，
+这种方式相比第 3 种方式就显得很合理。
+
+```java
+
+```
+#### 枚举
+**是否Lazy初始化**：否<br>
+**是否多线程安全**：是<br>
+**实现难度**：易<br>
+**描述**：这种实现方式还没有被广泛采用，但这是实现单例模式的最佳方法。它更简洁，自动支持序列化机制，绝对防止多次实例化。<br>
+这种方式是 Effective Java 作者 Josh Bloch 提倡的方式，它不仅能避免多线程同步问题，而且还自动支持序列化机制，
+防止反序列化重新创建新的对象，绝对防止多次实例化。
+```java
+public enum Singleton08 {
+    INSTANCE;
+    public void whateverMethod() {
+    }
+}
+```
 
 
 
