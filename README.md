@@ -418,10 +418,97 @@ public enum Singleton08 {
     }
 }
 ```
+## 5、原型模式
 
+### 什么是原型模式
 
+Prototype模式是一种对象创建型模式，它采取复制原型对象的方法来创建对象的实例。
+使用Prototype模式创建的实例，具有与原型一样的数据。
 
+### 原型模式的特点
++ 1、由原型对象自身创建目标对象。也就是说，对象创建这易动作发自原型对象本身。
++ 2、目标对象是原型对象的一个克隆。也就是说，通过Prototype模式创建的对象，不仅仅与原型对象具有相同的结构，还与原型对象具有相同的值。
++ 3、根据对象克隆深度层次的不同，有浅度克隆的深度克隆。
 
+### 使用场景
+
+在创建对象的时候，我们不只是希望被创建的对象继承其基类的基本结构，还希望继承原型对象的数据。<br>
+希望对目标对象的修改不影响既有的原型对象（深度克隆的时候可以完全互不影响）。<br>
+隐藏克隆操作的细节。很多时候，对对象本身的克隆需要涉及到类本身的数据细节。<br>
+
+实例：
+```java
+public class Person implements Cloneable{
+
+    private String name;
+    private int age;
+    private String sex;
+    private List<String> hobby;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
+
+    public String getSex() {
+        return sex;
+    }
+
+    public void setSex(String sex) {
+        this.sex = sex;
+    }
+
+    public List<String> getHobby() {
+        return hobby;
+    }
+
+    public void setHobby(List<String> hobby) {
+        this.hobby = hobby;
+    }
+
+    @Override
+    protected Object clone() throws CloneNotSupportedException {
+        return super.clone();
+    }
+}
+```
+测试：
+```java
+public class MainClass {
+    public static void main(String[] args) throws CloneNotSupportedException {
+        Person person1 = new Person();
+        person1.setName("小明");
+        person1.setAge(26);
+        person1.setSex("男");
+        person1.setHobby(Arrays.asList("鬼泣5", "艾尔登法环", "荒野大镖客", "战神"));
+
+        Person person2 = (Person) person1.clone();
+
+        System.out.println(person1 == person2);
+
+        System.out.println("person1.getName() = " + person1.getName());
+        System.out.println("person1.getAge() = " + person1.getAge());
+        System.out.println("person1.getSex() = " + person1.getSex());
+        System.out.println("person1.getHobby() = " + person1.getHobby());
+
+        System.out.println("person2.getName() = " + person2.getName());
+        System.out.println("person2.getAge() = " + person2.getAge());
+        System.out.println("person2.getSex() = " + person2.getSex());
+        System.out.println("person2.getHobby() = " + person2.getHobby());
+    }
+}
+```
 
 
 
