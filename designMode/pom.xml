@@ -33,6 +33,13 @@
             <artifactId>hutool-all</artifactId>
             <version>5.7.2</version>
         </dependency>
+
+        <dependency>
+            <groupId>net.bramp.ffmpeg</groupId>
+            <artifactId>ffmpeg</artifactId>
+            <version>0.7.0</version>
+        </dependency>
+
     </dependencies>
 
     <build>
