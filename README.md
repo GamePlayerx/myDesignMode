@@ -74,3 +74,114 @@ public class MianClass {
     }
 }
 ```
+
+## 2、工厂方法模式
+
+### 什么是工厂方法模式
+
+工厂方法模式同样属于类的创建型模式又被称为多态工厂模式。<br>
+工厂方法模式的意义是定义一个创建产品对象的工厂接口，将实际创建工作推迟到子类当中。
+核心工厂类不再负责产品的创建，这样核心类成为一个抽象工厂角色，仅负责具体工厂子类必须实现的接口，
+这样进一步抽象化的好处是使得工厂方法模式可以使系统再不修改具体工厂角色的情况下引进新的产品。<br>
+
+### 模式中包含的角色
+
++ 1、抽象工厂（Creator）角色工厂方法模式的核心，任何工厂类都必须实现这个接口。
++ 2、具体工厂（Concrete Creator）角色具体工厂类是抽象工厂的一个实现，负责实例化产品对象。
++ 3、抽象（Product）角色工厂方法模式所创建的所有对象的父类，它负责描述所有实例所共有的公共接口。
++ 4、具体产品（Concrete Product）角色工厂方法模式所创建的觉他实例对象。
+
+### 工厂方法模式和简单工厂模式比较
+
+工厂方法模式与简单工厂模式再结构上的差不多。工厂方法类的核心是一个抽象工厂类，而简单工厂模式把核心放再一个具体类上。<br>
+工厂方法模式之所以有一个别名叫多态性工厂模式是因为具体工厂类都有共同的接口，或者有共同的抽象父类。<br>
+当系统扩展需要添加新的产品对象时，仅仅需要添加一个具体对象以及一个具体工厂对象，原有工厂对象不需要进行任何修改，
+也不需要修改客户端，很好的符合了“开发-封闭”原则。而简单工厂模式在添加新产品对象后不得不修改工厂方法，扩展性不好。<br>
+工厂方法模式退化后可以演变成简单工厂模式。
+
+实例<br>
+需要一个Fruit接口<br>
+```java
+public interface Fruit {
+    public void get();
+}
+```
+接口的实现类<br>
+```java
+public class Apple implements Fruit {
+    public void get() {
+        System.out.println("好吃的苹果！");
+    }
+}
+
+public class Banana implements Fruit{
+    @Override
+    public void get() {
+        System.out.println("Banana!");
+    }
+}
+
+public class Orange implements Fruit {
+    @Override
+    public void get() {
+        System.out.println("orange");
+    }
+}
+
+```
+工厂的接口类Factory（这里用的泛型方便自己选择要创建的实体类）<br>
+```java
+public interface Factory {
+    Fruit create(Class s);
+}
+```
+接口Factory的实现类<br>
+```java
+public class FactoryImpl implements Factory{
+    @Override
+    public Fruit create(Class s) {
+        try {
+            return (Fruit) s.newInstance();
+        } catch (Exception e) {
+            throw new RuntimeException("实例化失败！");
+        }
+    }
+}
+```
+最后的测试<br>
+```java
+public class MainClass {
+    public static void main(String[] args) {
+        Factory factory = new FactoryImpl();
+        Fruit apple = factory.create(Apple.class);
+        apple.get();
+        Fruit banana = factory.create(Banana.class);
+        banana.get();
+        Fruit orange = factory.create(Orange.class);
+        orange.get();
+    }
+}
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
