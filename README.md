@@ -509,12 +509,139 @@ public class MainClass {
     }
 }
 ```
+## 6、建造者模式
 
+### 什么是建造者模式
 
+Builder模式也叫做建造者模式或者生成器模式。Builder模式是一种对象创建型模式之一，用来隐藏复合对象的创建过程，
+它把复合对象的创建过程加以抽象，通过子类继承和重载的方式，动态地创建具有复合属性的对象。<br>
+### Builder模式应用场景
 
++ 对象的创建：Builder模式是为对象的创建而涉及的模式。
++ 创建的是一个复合对象：被创建的对象为一个具有复合属性的复合对象。
++ 关注对象创建的各个部分的创建过程：不同的工厂（这里指builder生成器）对产品属性有不同的创建方法
 
+实例<br>
+```java
+public class House {
+    // 地板
+    private String floor;
+    // 墙
+    private String wall;
+    // 屋顶
+    private String housetop;
 
+    public String getFloor() {
+        return floor;
+    }
 
+    public void setFloor(String floor) {
+        this.floor = floor;
+    }
+
+    public String getWall() {
+        return wall;
+    }
+
+    public void setWall(String wall) {
+        this.wall = wall;
+    }
+
+    public String getHousetop() {
+        return housetop;
+    }
+
+    public void setHousetop(String housetop) {
+        this.housetop = housetop;
+    }
+}
+```
+```java
+public interface HouseBuilder {
+    //修地板
+    public void makeFloor();
+    //修墙
+    public void makeWall();
+    //修屋顶
+    public void makeHousetop();
+    public House getHouse();
+}
+```
+```java
+public class PingFangBuilder implements HouseBuilder {
+    House house = new House();
+
+    public void makeFloor() {
+        house.setFloor("平房-->地板");
+    }
+
+    public void makeHousetop() {
+        house.setHousetop("平房-->房顶");
+    }
+
+    public void makeWall() {
+        house.setWall("平房-->墙");
+    }
+
+    public House getHouse() {
+        return house;
+    }
+}
+```
+```java
+public class GongyuBuilder implements HouseBuilder{
+    House house = new House();
+
+    public House getHouse() {
+        return house;
+    }
+
+    public void makeFloor() {
+        house.setFloor("公寓-->地板");
+    }
+
+    public void makeHousetop() {
+        house.setHousetop("公寓-->房顶");
+    }
+
+    public void makeWall() {
+        house.setWall("公寓-->墙");
+    }
+}
+```
+```java
+public class HouseDirector {
+    public void makeHouse(HouseBuilder builder) {
+        builder.makeFloor();
+        builder.makeWall();
+        builder.makeHousetop();
+    }
+}
+```
+```java
+public class MainClass {
+    public static void main(String[] args) {
+        //由工程队来修
+        HouseBuilder builder = new GongyuBuilder();
+        //设计者来做
+        HouseDirector director = new HouseDirector();
+        director.makeHouse(builder);
+
+        House house = builder.getHouse();
+        System.out.println(house.getFloor());
+        System.out.println(house.getWall());
+        System.out.println(house.getHousetop());
+
+        HouseBuilder builder1 = new PingFangBuilder();
+        director.makeHouse(builder1);
+
+        House house1 = builder1.getHouse();
+        System.out.println(house1.getFloor());
+        System.out.println(house1.getWall());
+        System.out.println(house1.getHousetop());
+    }
+}
+```
 
 
 
