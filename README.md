@@ -642,7 +642,70 @@ public class MainClass {
     }
 }
 ```
+## 7、装饰模式
 
+### 什么是装饰模式
 
+装饰（Decorator）模式又叫做包装模式。通过一种客户端透明的方式来扩展对象的功能，是继承关系的一个替代方案。
 
+### 装饰模式的角色
 
++ 抽象组件角色：一个抽象接口，是被装饰类和装饰类的父接口。
++ 具体组件角色：为抽象组件的实现类。
++ 抽象装饰角色：包含一个组件的引用，并定义了抽象组件一致的接口。
++ 具体装饰角色：为抽象装饰角色的实现类。负责具体的装饰。
+
+实例：<br>
+```java
+public interface Car {
+    public void show();
+    public void run();
+}
+```
+```java
+public class XiaoMiCar implements Car{
+    @Override
+    public void show() {
+        this.run();
+        this.fly();
+    }
+
+    @Override
+    public void run() {
+        System.out.println("Are you ok!");
+    }
+
+    public void fly() {
+        System.out.println("屌爆了");
+    }
+}
+```
+```java
+public class HuaWeiCar implements Car{
+    @Override
+    public void show() {
+        this.huawei();
+        this.run();
+    }
+
+    @Override
+    public void run() {
+        System.out.println("一直领先！");
+    }
+
+    public void huawei() {
+        System.out.println("遥遥领先！");
+    }
+}
+```
+```java
+public class MainClass {
+    public static void main(String[] args) {
+        Car xiaomi = new XiaoMiCar();
+        xiaomi.show();
+
+        Car huawei = new HuaWeiCar();
+        huawei.show();
+    }
+}
+```
