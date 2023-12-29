@@ -871,9 +871,75 @@ public class MainClass {
 }
 ```
 
+## 享元模式
 
+### 什么是享元模式
 
+Flyweight模式也叫享元模式，是构造型模式之一，它通过其他类似对象共享数据来减少内存占用。<br>
 
+### 享元模式的角色
+
++ 抽象享元角色：所以具体享元类的父类，规定一些需要实现的公共接口。
++ 具体享元角色：抽象享元角色的具体实现类，并实现了抽象享元角色规定的方法。
++ 享元工厂角色：负责创建和管理享元角色。
+
+实例：<br>
+```java
+public class LoginUser {
+    private String username;
+    private String password;
+
+    public LoginUser(String username, String password) {
+        this.username = username;
+        this.password = password;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+}
+```
+```java
+public class LoginUserFactory {
+    private static Map<String, LoginUser> pool = new HashMap<>();
+    public LoginUserFactory() {
+        pool = new HashMap<>();
+    }
+    public static LoginUser getLoginUser(String key) {
+        LoginUser loginUser = pool.get(key);
+        if (loginUser == null) {
+            loginUser = new LoginUser("admin", "admin123");
+            pool.put(key, loginUser);
+        }
+        return loginUser;
+    }
+
+    public static void setLoginUser(String key, LoginUser loginUser) {
+        pool.put(key, loginUser);
+    }
+}
+```
+```java
+public class MainClass {
+    public static void main(String[] args) {
+        LoginUser login = LoginUserFactory.getLoginUser("a");
+        System.out.println("login.getUsername() = " + login.getUsername());
+        System.out.println("login.getPassword() = " + login.getPassword());
+    }
+}
+```
 
 
 
