@@ -1017,6 +1017,78 @@ public class MainClass {
 }
 ```
 
+## 12、外观模式
 
+### 什么是外观模式
 
+Facade模式也叫外观模式.Facade模式为一组具有类似功能的类群，比如类库，子系统等等，提供一个一致
+的简单的界面。这个一致的简单的界面被称作facade。
 
+### 外观模式的角色
+
++ Facade为调用方定义简单的调用接口。
++ Clients调用者。通过Facade接口调用提供某功能的内部类群。
++ Packages功能提供者。指提供功能的类群（模块或子系统）
+
+实例：<br>
+```java
+public class SystemA {
+    public void doSomething() {
+        System.out.println("与买桂花同载酒，终不似，古人游！");
+    }
+}
+```
+```java
+public class SystemB {
+    public void doSomething() {
+        System.out.println("当你因为错过太阳而哭泣，那你又要错过群星");
+    }
+}
+```
+```java
+public class SystemC {
+    public void doSomething() {
+        System.out.println("99.99%");
+    }
+}
+```
+```java
+public class Facade {
+    private SystemA systemA;
+    private SystemB systemB;
+    private SystemC systemC;
+
+    public Facade() {
+        systemA = new SystemA();
+        systemB = new SystemB();
+        systemC = new SystemC();
+    }
+
+    public void doABC() {
+        this.systemA.doSomething();
+        this.systemB.doSomething();
+        this.systemC.doSomething();
+    }
+
+    public void doAB() {
+        this.systemA.doSomething();
+        this.systemB.doSomething();
+    }
+}
+```
+```java
+public class MainClass {
+    public static void main(String[] args) {
+        Facade facade = new Facade();
+        facade.doABC();
+    }
+}
+```
+```java
+public class MainClass1 {
+    public static void main(String[] args) {
+        Facade facade = new Facade();
+        facade.doAB();
+    }
+}
+```
