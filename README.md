@@ -402,7 +402,15 @@ instance 不一定被初始化。因为 SingletonHolder 类没有被主动使用
 这种方式相比第 3 种方式就显得很合理。
 
 ```java
-
+public class Singleton07 {
+    private static class Singleton07Holder {
+        private static final Singleton07 INSTANCE =new Singleton07();
+    }
+    private Singleton07() {}
+    public static final Singleton07 getInstance() {
+        return Singleton07Holder.INSTANCE;
+    }
+}
 ```
 #### 枚举
 **是否Lazy初始化**：否<br>
@@ -877,7 +885,7 @@ public class MainClass {
 
 Flyweight模式也叫享元模式，是构造型模式之一，它通过其他类似对象共享数据来减少内存占用。<br>
 
-### 享元模式的角色
+### 10、享元模式的角色
 
 + 抽象享元角色：所以具体享元类的父类，规定一些需要实现的公共接口。
 + 具体享元角色：抽象享元角色的具体实现类，并实现了抽象享元角色规定的方法。
@@ -941,10 +949,73 @@ public class MainClass {
 }
 ```
 
+## 11、代理模式
 
+### 什么是代理模式
 
+Proxy模式又叫做代理模式，是构造型的设计模式之一，它可以为其他对象提供一种代理（Proxy）以控制对这个对象的访问。<br>
+所谓代理，是指具有与代理元（被代理的对象）具有相同的接口的类，客户端必须通过代理与被代理的目标类交互，
+而代理一般在交互的过程中（交互前后），进行某些特别的处理。<br>
 
+### 代理模式的角色
 
++ subject（抽象主题角色）：真实主题与代理主题的共同接口。
++ RealSubject（真实主题角色）：定义了代理角色所代表的真实对象。
++ Proxy（代理主题角色）：含有对真实主题角色的引用，代理角色通常在将客户端调用传递给真主题对象之前或之后执行某些操作，而不是单纯返回真实的对象
+
+### 动态代理
+
+1. InvocationHandler接口
+2. invoke方法
+3. Proxy.newProxyInstance();
+
+实例：<br>
+```java
+public interface Subject {
+    public void show();
+}
+```
+```java
+public class RealSubject implements Subject{
+    @Override
+    public void show() {
+        System.out.println("原神，启动");
+    }
+}
+```
+```java
+public class ProxySubject implements Subject {
+    Subject subject = null;
+
+    public ProxySubject(Subject subject) {
+        this.subject = subject;
+    }
+
+    @Override
+    public void show() {
+        see();
+        subject.show();
+        look();
+    }
+
+    public void look() {
+        System.out.println("星穹铁道，开启！");
+    }
+
+    public void see() {
+        System.out.println("今天的崩坏三是无敌的！");
+    }
+}
+```
+```java
+public class MainClass {
+    public static void main(String[] args) {
+        Subject subject = new RealSubject();
+        Subject proxySubject = new ProxySubject(subject);
+        proxySubject.show();
+    }
+}
+```
 
 
 
