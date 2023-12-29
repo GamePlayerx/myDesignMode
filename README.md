@@ -792,3 +792,94 @@ public class MainClass {
 }
 ```
 
+## 9、观察者模式
+
+### 什么是观察者模式
+
+Observer模式是行为模式之一，它的作用是当作一个对象的状态发送变化时，能够主动通知其他管理对象，自动刷新对象状态。<br>
+Observe模式提供给管理对象一种同步通信的手段，使某个对象与依赖它的其他对象之间保持状态同步。<br>
+
+### 观察者模式的角色
+
+Subject（被观察者）被观察的对象。当需要被观察的状态发生变化时，需要通知队列种所以观察者对象。Subject
+需要维持（添加，删除，通知）一个观察者对象的队列列表。<br>
++ ConcreteSubject被观察者的具体实现。包含一些基本的属性状态及其他操作。
++ Observer（观察者）接口或抽象类。当Subject的状态发生变化时，Observer对象将通过一个callback函数得到通知。
++ ConcreteObserver观察者的具体实现。得到通知后将完成一些具体的业务逻辑处理。
+
+### 观察者模式的典型应用
+
++ 侦听事件驱动程序设计中的外部事件
++ 侦听/监视某个对象的状态变化
++ 发布者/订阅者（publisher/subscriber）模型中，当一个外部事件（新的产品，消息的出现等等）被触发时，通知邮件列表中的订阅者
+
+实例：<br
+```java
+public class User extends Observable {
+    private String username;
+    private String password;
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.setChanged();
+        this.notifyObservers("username被修改了====" + username);
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+        this.setChanged();
+        this.notifyObservers("password被修改了====" + password);
+    }
+}
+```
+```java
+public class MyObServer implements Observer {
+    /**
+     *
+     * @param o     修改之前的
+     * @param arg   调用：notifyObservers的参数
+     */
+    @Override
+    public void update(Observable o, Object arg) {
+        System.out.println("对象发生变化！");
+        User user = (User)o;
+        System.out.println("user.getUsername()===" + user.getUsername());
+        System.out.println("user.getPassword()===" + user.getPassword());
+        System.out.println("o = " + o);
+        System.out.println("arg = " + arg);
+    }
+}
+```
+```java
+public class MainClass {
+    public static void main(String[] args) {
+        User user = new User();
+        user.setUsername("小明");
+        user.setPassword("123");
+        user.addObserver(new MyObServer());
+        user.setUsername("小黑");
+        user.setPassword("456");
+    }
+}
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
