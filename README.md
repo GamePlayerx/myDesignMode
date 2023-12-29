@@ -1092,3 +1092,104 @@ public class MainClass1 {
     }
 }
 ```
+
+## 13、组合模式
+
+### 什么是组合模式
+
+Composite模式也叫组合模式，是构造型的设计模式之一。通过递归手段老构造树形的对象结构，并可以通过一个
+对象来访问整个对象数。
+
+### 组合模式的角色
+
++ Component（树形机构的节点抽象）
++ 为所以的对象定义统一的接口（公共属性，行为等的定义）
++ 提供管理子节点对象的接口方法
++ 【可选】提供管理父节点对象的接口方法Leaf（树形结构的叶节点）
++ Component的实现子类
++ Composite（树形结构的枝节点）
++ Component的实现子类
+
+实例：<br>
+```java
+public interface Employee {
+    public void showEmployeeDetails();
+}
+```
+```java
+public class Developer implements Employee{
+    private String name;
+    private long empId;
+    private String position;
+
+    public Developer(String name, long empId, String position) {
+        this.name = name;
+        this.empId = empId;
+        this.position = position;
+    }
+    @Override
+    public void showEmployeeDetails() {
+        System.out.println(empId + " " + name + " " + position);
+    }
+}
+```
+```java
+public class Manager implements Employee{
+    private String name;
+    private long empId;
+    private String position;
+    public Manager(String name, long empId, String position) {
+        this.name = name;
+        this.empId = empId;
+        this.position = position;
+    }
+    @Override
+    public void showEmployeeDetails() {
+        System.out.println(name + " " + position);
+    }
+}
+```
+```java
+public class CompanyDirectory implements Employee{
+    private List<Employee> employeeList = new ArrayList<>();
+
+    @Override
+    public void showEmployeeDetails() {
+        for (Employee employee : employeeList) {
+            employee.showEmployeeDetails();
+        }
+    }
+
+    public void addEmployee(Employee employee) {
+        employeeList.add(employee);
+    }
+
+    public void removeEmployee(Employee employee) {
+        employeeList.remove(employee);
+    }
+}
+
+```
+```java
+public class MainClass {
+    public static void main(String[] args) {
+        Developer developer1 = new Developer("xcc", 26, "game");
+        Developer developer2 = new Developer("qwe", 27, "player");
+        CompanyDirectory companyDirectory1 = new CompanyDirectory();
+        companyDirectory1.addEmployee(developer1);
+        companyDirectory1.addEmployee(developer2);
+
+        Manager manager1 = new Manager("today", 1,"weeking");
+        Manager manager2 = new Manager("tomorrow", 7,"working");
+
+        CompanyDirectory companyDirectory2 = new CompanyDirectory();
+        companyDirectory2.addEmployee(manager1);
+        companyDirectory2.addEmployee(manager2);
+
+        CompanyDirectory directory = new CompanyDirectory();
+        directory.addEmployee(companyDirectory1);
+        directory.addEmployee(companyDirectory2);
+        directory.showEmployeeDetails();
+    }
+}
+```
