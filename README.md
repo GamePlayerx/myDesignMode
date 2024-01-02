@@ -1193,3 +1193,98 @@ public class MainClass {
     }
 }
 ```
+
+## 14、桥接模式
+
+### 什么是桥接模式
+
+Bridge模式又叫做桥接模式，是构造型的设计模式之一。Bridge模式基于类的最小设计原则，通过使用封装，聚合
+以及继承等行为来让不同的类承担不同的责任。它的主要特点是把抽象（abstraction）与行为实现（implementation）
+分离开来，从而可以保持各部分的独立性以及应对它们的功能扩展。<br>
+
+### 桥接模式的角色
+
++ Client：Bridge模式的使用者
++ Abstraction：抽象类接口（接口或抽象类）、维护对行为实现（Implementor）的引用
++ Refined Abstraction：Abstraction子类
++ Implementor：行为实现类接口（Abstraction接口定义了基于Implementor接口的更高层次的操作）
++ ConcreteImplementor：Implementor子类
+
+实例：<br>
+```java
+public abstract class Product {
+    // 不管什么产品，都要生产
+    public abstract void make();
+    // 不管什么产品，都要销售
+    public abstract void sell();
+}
+```
+```java
+public class Card extends Product{
+    @Override
+    public void make() {
+        System.out.println("生产RTX4090显卡！");
+    }
+
+    @Override
+    public void sell() {
+        System.out.println("全线的显卡来了....");
+    }
+}
+```
+```java
+public class AmdCard extends Product{
+    @Override
+    public void make() {
+        System.out.println("生产7900x显卡！");
+    }
+
+    @Override
+    public void sell() {
+        System.out.println("AMD YES YES YES");
+    }
+}
+```
+```java
+public class Corp {
+    private Product product;
+
+    public Corp(Product product) {
+        this.product = product;
+    }
+
+    public void makeMoney() {
+        this.product.make();
+        this.product.sell();
+    }
+}
+```
+```java
+public class ClothingCorp extends Corp{
+    public ClothingCorp(Product product) {
+        super(product);
+    }
+
+    public void makeMoney() {
+        super.makeMoney();
+        System.out.println("赚钱了。。。。。。。。");
+    }
+}
+```
+```java
+public class MainClass {
+    public static void main(String[] args) {
+        System.out.println("===显卡赚钱===");
+        ClothingCorp card = new ClothingCorp(new Card());
+        card.makeMoney();
+
+        System.out.println("AMD========");
+        ClothingCorp amd = new ClothingCorp(new AmdCard());
+        amd.makeMoney();
+    }
+}
+```
+
+
+
+
