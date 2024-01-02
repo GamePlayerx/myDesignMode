@@ -1402,7 +1402,7 @@ public class LogAdapter implements LogFactory{
 ```
 LogAdapter实现了系统的目标接口，，同时持有三方库NbLogger的引用。<br>
 
-*客户端使用**<br>
+**客户端使用**<br>
 
 ```java
 public class AdapterClient {
@@ -1413,14 +1413,105 @@ public class AdapterClient {
 }
 ```
 
+## 16、解释器模式
 
+### 什么是解释器模式
 
+Interpreter模式也叫解释器模式，是行为模式之一，它是一种特殊的设计模式，它建立一个解释器，对于特定的计算机程序设计语言，用来
+解释预先定义的文法。简单地说，Interpreter模式是一种简单的语法解释器架构。
 
+### 解释器模式应用场景
 
+当有一个语言需要解释执行并且你可将语言中的句子表示为一个抽象语法树时，可使用解释器模式。而当存在以下情况时该模式效果最好:<br>
+该语法简单对于复杂的语法，语法的类层次变得庞大而无法管理。此时语法分析程序生成器这样的工具是更好的选择。它们无需构建
+抽象语法树即可解释表达式，这样可以节省空间而且还可能节省时间。<br>
+效率不是一个关键问题，最高效的解释器通常不是通过解释语法分析树实现的，而是首先将它们转换成另一种形式。例如，正则表达式
+通常被转换成状态机。但即使在这种情况下，转换器仍可用解释器模式实现，该模式仍是有用的。<br>
 
+### 解释器模式的角色
 
++ Context解释器上下文环境类。用来存储解释器的上下文环境，比如需要解释的语法等。
++ AbstractExpression 解释器抽象类。
++ ConcreteExpression解释器具体实现类。
 
+实例:<br>
+```java
+public class Context {
+    private String input;
+    private int output;
 
+    public Context(String input) {
+        this.input = input;
+    }
+
+    public String getInput() {
+        return input;
+    }
+
+    public void setInput(String input) {
+        this.input = input;
+    }
+
+    public int getOutput() {
+        return output;
+    }
+
+    public void setOutput(int output) {
+        this.output = output;
+    }
+}
+```
+```java
+public abstract class Expression {
+    public abstract void interpret(Context context);
+}
+```
+```java
+public class MinusExpression extends Expression{
+    @Override
+    public void interpret(Context context) {
+        System.out.println("自动递减！");
+        String input = context.getInput();
+        int inInput = Integer.parseInt(input);
+        --inInput;
+        context.setInput(String.valueOf(inInput));
+        context.setOutput(inInput);
+    }
+}
+```
+```java
+public class PlusExpression extends Expression{
+    @Override
+    public void interpret(Context context) {
+        System.out.println("自动递增");
+        String input = context.getInput();
+        int inInput = Integer.parseInt(input);
+        ++inInput;
+        context.setInput(String.valueOf(inInput));
+        context.setOutput(inInput);
+    }
+}
+```
+```java
+public class MainClass {
+    public static void main(String[] args) {
+        String number = "26";
+        Context context = new Context(number);
+
+        List<Expression> list = new ArrayList<>();
+        list.add(new PlusExpression());
+        list.add(new PlusExpression());
+        list.add(new PlusExpression());
+        list.add(new MinusExpression());
+        list.add(new MinusExpression());
+
+        for (Expression ex : list) {
+            ex.interpret(context);
+            System.out.println(context.getOutput());
+        }
+    }
+}
+```
 
 
 
