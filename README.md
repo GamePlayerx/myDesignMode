@@ -1513,16 +1513,133 @@ public class MainClass {
 }
 ```
 
+## 17、中介者模式
 
+### 什么是中介者模式
 
+Mediator模式也叫中介者模式，Mediator模式是行为模式之一，在Mediator模式中，类之间的交互行为被统一放在Mediator的对象中，对象
+通过Mediator对象同其他对象交互，Mediator对象起着控制器的作用。<br>
 
+### 中介者模式的角色
 
++ mediator 中介者类的抽象父类。
++ concreteMediator 具体的中介者类。
++ colleague 关联类的抽象父类。
++ concreteColleague 具体的关联类。
 
+### 中介者模式的优点
 
+1. 将系统按功能分割成更小的对象，符合类的最小设计原则
+2. 对关联对象的集中控制
+3. 减小类的耦合程度，明确类之间的相互关系：当类之间的关系过于复杂时，其中任何一个类的修改都会影响到其他类，不符合类的设计的开闭原则 ，而Mediator模式将原来相互依存的多对多的类之间的关系简化为Mediator控制类与其他关联类的一对多的关系，当其中一个类修改时，可以对其他关联类不产生影响（即使有修改，也集中在Mediator控制类）。
+4. 有利于提高类的重用性
 
+实例<br>
+```java
+public class Person {
+    String name;
+    Mediator mediator;
+    Person(String name, Mediator mediator) {
+        this.name = name;
+        this.mediator = mediator;
+    }
+}
 
+```
+```java
+public abstract class Mediator { // 抽象中介者
+    // 申明一个联络方法
+    public abstract void constact(String message, Person person);
+}
+```
+```java
+public class Tenant extends Person{  // 房客
+    Tenant(String name, Mediator mediator) {
+        super(name, mediator);
+    }
 
+    // 与中介者联系
+    public void constact(String message) {
+       mediator.constact(message, this);
+    }
 
+    // 获取信息
+    public void getMessage(String message) {
+        System.out.println("租房者：" + name + "， 获得信息：" + message);
+    }
+}
+```
+```java
+public class MediatorStructure extends Mediator{ // 具体中介者对象：中介结构
+    //首先中介结构必须知道所有房主和租房者的信息
+    private HouseOwner houseOwner;
+    private Tenant tenant;
 
+    public HouseOwner getHouseOwner() {
+        return houseOwner;
+    }
+
+    public void setHouseOwner(HouseOwner houseOwner) {
+        this.houseOwner = houseOwner;
+    }
+
+    public Tenant getTenant() {
+        return tenant;
+    }
+
+    public void setTenant(Tenant tenant) {
+        this.tenant = tenant;
+    }
+
+    @Override
+    public void constact(String message, Person person) {
+        if(person == houseOwner){          //如果是房主，则租房者获得信息
+            tenant.getMessage(message);
+        }
+        else{       //反之则是获得房主信息
+            houseOwner.getMessage(message);
+        }
+    }
+}
+```
+```java
+public class HouseOwner extends Person{
+    HouseOwner(String name, Mediator mediator) {
+        super(name, mediator);
+    }
+
+    // 与中介者联系
+    public void constact(String message) {
+        mediator.constact(message, this);
+    }
+
+    // 获取信息
+    public void getMessage(String message) {
+        System.out.println("房主：" + name + "，获得信息：" + message);
+    }
+}
+```
+```java
+public class Client {
+    public static void main(String[] args) {
+        //中介
+        MediatorStructure mediator = new MediatorStructure();
+
+        //房主:向中介提供房屋信息、获得租客信息
+        HouseOwner houseOwner = new HouseOwner("张三", mediator);
+        //租客:向中介提供租房信息、获得房屋信息
+        Tenant tenant = new Tenant("李四", mediator);
+
+        //中介结构要知道房主和租房者
+        mediator.setHouseOwner(houseOwner);
+        mediator.setTenant(tenant);
+
+        //租客获得信息
+        tenant.constact("听说你那里有三室的房主出租.....");
+        //房主获得信息
+        houseOwner.constact("是的!请问你需要租吗?");
+    }
+}
+```
 
 
