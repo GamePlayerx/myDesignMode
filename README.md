@@ -1285,6 +1285,153 @@ public class MainClass {
 }
 ```
 
+## 15、适配器模式
+
+### 什么是适配器模式
+
+Adapter模式也叫适配器模式，是构造型模式之一，通过Adapter模式可以改变已有类（或外部类）的接口形式。<br>
+
+定义：将一个接口转换为客户端所期待的接口，从而使两个接口不兼容的类可以在一起工作<br>
+
+适配器模式还有各别名叫：Wrapper（包装器），顾名思义角色将目标类用一个新类包装一下，相当于在客户端与目标类
+直接加了一层。IT世界有句俗语：没有什么问题是加一层不能解决的。<br>
+
+通俗理解：类似与我们的转接头，比如国内220v，欧洲有的是230v，有的是110v，那么我们过去就需要对应的转接头才可以使用。
+
+### 使用场景
+
+在大规模的系统开发过程中，我们常常碰到诸如以下这些情况：我们需要实现某些功能，这些功能已有还不太成熟的一个或多个外部
+组件，吐过我们组件重新开发这些功能会花费大量时间；所以很多情况下会选择暂时使用外部组件，以后再考虑随时替换。但这样一来，
+会带来一个问题，随着对外部组件库的替换，可能需要对引用该外部组件的源代码进行大面积的修改，因此也极有可能引入新的问题。<br>
+
+Adapter模式就是针对这中类似需求而提出来的。Adapter模式通过定义一个新的接口（对要实现的功能加以抽象），和一个实现
+该接口的Adapter（适配器）类来透明地调用外部组件。这样替换外部组件时，最多只要修改几个Adapter类就可以了，其他
+源代码都不会受到影响。
+
+
+实例1：<br>
+```java
+public class Current {
+    public void use220V() {
+        System.out.println("使用220V电流！");
+    }
+}
+```
+```java
+public class Adapter extends Current{
+    public void use18V() {
+        System.out.println("使用适配器");
+        this.use220V();
+    }
+}
+```
+```java
+public class Adapter2 {
+    private Current current;
+    public Adapter2(Current current) {
+        this.current = current;
+    }
+
+    public void use18V() {
+        System.out.println("使用适配器！");
+        this.current.use220V();
+    }
+}
+```
+```java
+public class MainClass {
+    public static void main(String[] args) {
+        Adapter2 adapter2 = new Adapter2(new Current());
+        adapter2.use18V();
+        Adapter adapter = new Adapter();
+        adapter.use18V();
+    }
+}
+```
+
+**案例2:**<br>
+
+日志是适配器使用最多的一个场景：扩展使用不同的日志<br>
+极大的增强了抽象的可扩展性，通过此模式，你可以随意扩展程序的功能，但却不需要修改接口。
+
+**第一、确定目标接口**<br
+
+系统原来的日志接口<br>
+```java
+public interface LogFactory {
+    void debug(String tag, String message);
+}
+```
+
+**第二、三方库接口及实现**<br>
+
+下面是第三方提供的日志功能，但是其接口与正在使用的不兼容
+
+```java
+public interface NbLogger {
+    void d(int priority, String message, Object... obj);
+}
+
+// 具体提供日志功能的实现类
+public class NbLoggerImp implements NbLogger{
+    @Override
+    public void d(int priority, String message, Object... obj) {
+        System.out.println(String.format("牛xlogger记录:%s", message));
+    }
+}
+```
+
+**第三、构建适配器类**<br>
+
+这个类是适配器模式的核心，通过此类就可以将三方提供的接口转换为系统的目标接口<br>
+
+```java
+public class LogAdapter implements LogFactory{
+    private NbLogger nbLogger;
+
+    public LogAdapter(NbLogger nbLogger) {
+        this.nbLogger = nbLogger;
+    }
+
+    @Override
+    public void debug(String tag, String message) {
+        Objects.requireNonNull(nbLogger);
+        nbLogger.d(1, message);
+    }
+}
+```
+LogAdapter实现了系统的目标接口，，同时持有三方库NbLogger的引用。<br>
+
+*客户端使用**<br>
+
+```java
+public class AdapterClient {
+    public void recordLog() {
+        LogFactory logFactory = new LogAdapter(new NbLoggerImp());
+        logFactory.debug("测试", "logger打印log");
+    }
+}
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
