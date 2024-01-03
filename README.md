@@ -1553,6 +1553,23 @@ public abstract class Mediator { // 抽象中介者
 }
 ```
 ```java
+public class HouseOwner extends Person{
+    HouseOwner(String name, Mediator mediator) {
+        super(name, mediator);
+    }
+
+    // 与中介者联系
+    public void constact(String message) {
+        mediator.constact(message, this);
+    }
+
+    // 获取信息
+    public void getMessage(String message) {
+        System.out.println("房主：" + name + "，获得信息：" + message);
+    }
+}
+```
+```java
 public class Tenant extends Person{  // 房客
     Tenant(String name, Mediator mediator) {
         super(name, mediator);
@@ -1603,23 +1620,6 @@ public class MediatorStructure extends Mediator{ // 具体中介者对象：中�
 }
 ```
 ```java
-public class HouseOwner extends Person{
-    HouseOwner(String name, Mediator mediator) {
-        super(name, mediator);
-    }
-
-    // 与中介者联系
-    public void constact(String message) {
-        mediator.constact(message, this);
-    }
-
-    // 获取信息
-    public void getMessage(String message) {
-        System.out.println("房主：" + name + "，获得信息：" + message);
-    }
-}
-```
-```java
 public class Client {
     public static void main(String[] args) {
         //中介
@@ -1641,5 +1641,159 @@ public class Client {
     }
 }
 ```
+
+## 18、职责链模式
+
+### 什么是职责链模式
+
+Chain of Responsibility（CoR）模式也叫职责链模式或者职责连锁模式，是行为模式之一，该模式构造一系列分别担当不同
+的职责的类的对象来共同完成一个任务，这些类的对象之间像链条一样紧密相连，所以被称作职责链模式。<br>
+
+### 职责链模式的应用场景
+
+**例1**：比如客户Client要完成一个任务，中国任务包括a，b，c，d四个部分。首先客户Client把任务交给A，A完成a部分之后，把任务交给B，B完成b
+部分，.....直到D完成d部分。<br>
+
+**例2**：比如政府部分的某项工作，县政府先完成自己能处理的部分，不能处理的部分交给省政府，省政府再完成自己职责范围内的部分，
+不能处理的部分交给中央政府，中央政府最后完成该项工作。<br>
+
+**例3**：软件窗口的消息 传播。<br>
+
+**例4**：SERVLET容器的过滤器（Filter）框架实现。<br>
+
+### 职责链模式的基本条件
+
+要实现Chain of Responsibility模式，需要满足该模式的基本条件：<br>
+1. 对象链的组织。需要将某任务的所有职责执行对象以链的形式加以组织。
+2. 消息或请求的传递。将消息或请求沿着对象链传递，以让处于对象链中的对象得到处理机会。
+3. 处于对象链中的对象的职责分配。不同的对象完成不同的职责。
+4. 任务的完成。处于对象链的末尾的对象结束任务并停止消息或请求的继续传递。
+
+### 职责链模式的角色
+
++ Handler   处理了欸的抽象父类
++ concreteHandler    具体的处理类
+
+### 职责链模式的优缺点
+
+优点：<br>
+1. 责任的分担。每个类只需要处理自己该处理的工作（不该处理的传递给下一个对象完成），明确各类的责任范围，符合类的最小封装原则。
+2. 可以根据需要自由组合工作流程。如工作流程发生变化，可以通过重新分配对象链便可适应新的工作流程。
+3. 类与类之间可以以松耦合的形式加以组织。
+
+缺点：<br>
+因为处理时以链的形式再对象间传递消息，根据实现方式不同，有可能会影响处理的速度。
+
+实例<br>
+```java
+public interface HandlerChain {
+    void setNext(HandlerChain handler);
+    void doChian();
+}
+```
+```java
+public class ConcreteHandlerA implements HandlerChain{
+    private HandlerChain nextHandler;
+    @Override
+    public void setNext(HandlerChain handler) {
+        this.nextHandler = handler;
+    }
+
+    @Override
+    public void doChian() {
+        System.out.println("处理请求A");
+        this.nextHandler.doChian();
+    }
+}
+```
+```java
+public class ConcreteHandlerB implements HandlerChain{
+    private HandlerChain nextHandler;
+    @Override
+    public void setNext(HandlerChain handler) {
+        this.nextHandler = handler;
+    }
+
+    @Override
+    public void doChian() {
+        System.out.println("处理请求B！");
+        this.nextHandler.doChian();
+    }
+}
+```
+```java
+public class ConcreteHandlerC implements HandlerChain{
+    private HandlerChain nextHandler;
+    @Override
+    public void setNext(HandlerChain handler) {
+        this.nextHandler = handler;
+    }
+
+    @Override
+    public void doChian() {
+        System.out.println("处理请求C！！");
+        this.nextHandler.doChian();
+    }
+}
+```
+```java
+public class ConcreteHandlerD implements HandlerChain{
+    private HandlerChain nextHandler;
+    @Override
+    public void setNext(HandlerChain handler) {
+        this.nextHandler = handler;
+    }
+
+    @Override
+    public void doChian() {
+        System.out.println("处理请求D！！！");
+    }
+}
+```
+```java
+public class MainClass {
+    public static void main(String[] args) {
+        // 创建处理器链
+        List<HandlerChain> handlers = new ArrayList<>();
+        handlers.add(new ConcreteHandlerA());
+        handlers.add(new ConcreteHandlerB());
+        handlers.add(new ConcreteHandlerC());
+        handlers.add(new ConcreteHandlerD());
+
+        // 处理器连接在一起
+        for (int i = 0; i < handlers.size() - 1; i++) {
+            HandlerChain currentHandler = handlers.get(i);
+            HandlerChain nextHandler  = handlers.get(i + 1);
+            currentHandler.setNext(nextHandler);
+        }
+
+        // 处理请求
+        handlers.get(0).doChian();
+    }
+}
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
