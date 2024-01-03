@@ -1773,24 +1773,116 @@ public class MainClass {
 }
 ```
 
+## 19、迭代模式
 
+### 什么是迭代模式
 
+Iterator模式也叫迭代模式，是行为模式之一，它把对容器中包含的内部对象的访问委让给外部类，使用Iterator（遍历）按顺序
+进行访问的设计模式。<br>
 
+### 不使用迭代模式的应用
 
+1. 由容器自己实现顺序遍历。直接在容器类里直接添加顺序遍历方法
+2. 让调用者自己实现遍历。直接暴露数据细节给外部
 
+### 不使用迭代模式的缺点
 
+1. 容器类承担了太多功能：一方面需要提供添加删除等本身应有的功能；一方面还需要提供遍历访问功能。
+2. 往往容器在实现遍历的过程中，需要保存遍历状态，当跟元素的添加删除等功能夹杂在一起，很容易引起混乱和程序运行错误等。
 
+### 使用迭代模式的应用
 
+Iterator模式就是为了有效地处理按顺序进行遍历访问的一种设计模式，简单地说，Iterator模式提供一种有效的方法，可以屏蔽聚集
+对象集合的容器类的实现细节，而能对容器内包含的对象元素按顺序进行有效的遍历访问。<br>
 
+所有，Iterator模式的应用场景可以归纳为满足以下几个条件：<br>
++ 访问容器中包含的内部对象
++ 按顺序访问
 
+### 迭代模式的角色
 
++ Iterator（迭代器接口）：该接口必须定义实现迭代功能的最小定义方法集比如提供hasNext()和next()方法。
++ ConcreteIterator（迭代器实现类）：迭代器接口Iterator的实现类。可以根据具体情况加以实现。
++ Aggregate（容器接口）：定义基本功能以及提供类似Iterator iterator()的方法。
++ concreteAggregate（容器实现类）：容器接口的实现类。必须实现Iterator iterator()方法。
 
+### 迭代模式的优点
 
+1. 实现功能分离，简化容器接口。让容器只实现本身的基本功能，把迭代功能委让给外部类实现，符合类的设计原则。
+2. 英寸容器的实现细节。
+3. 为容器或其子容器提供了一个统一的接口，一方面方便调用；另一方面使得调用者不必关注迭代器的实现细节。
+4. 可以为容器或其子容器实现不同的迭代方法或多个迭代方法。
 
+实例<br>
+```java
+public interface Iterator {
+    boolean hasNext();
+    Object next();
+}
+```
+```java
+public interface List {
+    void add(String str);
+    Iterator iterator();
+}
+```
+```java
+public class ArrayList implements List{
+    public String[] names = new String[10];
+    @Override
+    public void add(String str) {
+        for (int i = 0; i < names.length; i++) {
+            if (names[i] == null) {
+                names[i] = str;
+                break;
+            }
+        }
+    }
 
+    @Override
+    public Iterator iterator() {
+        return new NameIterator();
+    }
 
+    private class NameIterator implements Iterator {
 
+        int index;
 
+        @Override
+        public boolean hasNext() {
+            if (index < names.length && names[index] != null) {
+                return true;
+            }
+            return false;
+        }
+
+        @Override
+        public Object next() {
+            if (this.hasNext()) {
+                return names[index++];
+            }
+            return null;
+        }
+    }
+}
+```
+```java
+public class MainClass {
+    public static void main(String[] args) {
+        List list = new ArrayList();
+        list.add("黑神话：悟空");
+        list.add("艾尔登法环");
+        list.add("荒野大镖客");
+        list.add("鬼泣");
+        list.add("战神");
+        list.add("极限国度");
+        for (Iterator iter = list.iterator(); iter.hasNext();) {
+            String name = String.valueOf(iter.next());
+            System.out.println("Name : " + name);
+        }
+    }
+}
+```
 
 
 
