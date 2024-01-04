@@ -1884,8 +1884,133 @@ public class MainClass {
 }
 ```
 
+## 20、模板方法模式
 
+### 什么是模板方法模式
 
+Template Method模式也叫模板方法模式，是行为模式之一，它把具有特定步骤算法中的某些必要的处理委让给抽象方法，通过
+子类继承对抽象方法的不同实现改变整个算法的行为。<br>
 
+### 模板方法模式的应用场景
 
++ 具有统一的操作步骤或操作过程
++ 具有不同的操作细节
++ 存在多个具有同样操作步骤的应用场景，但某些具体的操作细节却各不相同
+
+### 模板方法模式的角色
+
++ AbstractClass：抽象类的父类
++ ConcreteClass：具体的实现子类
++ templateMethod()：模板方法
++ method1()与method2()：具体步骤方法
+
+实例<br>
+```java
+public abstract class MakeCar { // 组装车
+    // 组装车头
+    public abstract void makeHead();
+    // 组装车身
+    public abstract void makeBody();
+    // 组装车尾
+    public abstract void makeTail();
+
+    public void make() {
+        this.makeHead();
+        this.makeBody();
+        this.makeTail();
+    }
+}
+```
+```java
+public abstract class MakeGame {
+    // 制作名字
+    public abstract void makeName();
+    // 制作音乐
+    public abstract void makeMusic();
+    // 制作画面
+    public abstract void makeImage();
+    // 制作引擎
+    public abstract void makeEngine();
+
+    public void make() {
+        this.makeName();
+        this.makeMusic();
+        this.makeImage();
+        this.makeEngine();
+    }
+}
+```
+```java
+public class MakeWorld extends MakeGame{
+    @Override
+    public void makeName() {
+        System.out.println("制作黑神话：悟空");
+    }
+
+    @Override
+    public void makeMusic() {
+        System.out.println("制作黑神话：悟空的音乐：云宫迅音");
+    }
+
+    @Override
+    public void makeImage() {
+        System.out.println("制作黑神话：悟空的画面：4K");
+    }
+
+    @Override
+    public void makeEngine() {
+        System.out.println("制作黑神话：悟空的引擎：虚幻5引擎");
+    }
+}
+```
+```java
+public class MakeBus extends MakeCar{
+    @Override
+    public void makeHead() {
+        System.out.println("bus：组装车头");
+    }
+
+    @Override
+    public void makeBody() {
+        System.out.println("bus：组装车身");
+    }
+
+    @Override
+    public void makeTail() {
+        System.out.println("bus：组装车尾");
+    }
+}
+```
+```java
+public class MakeJeep extends MakeCar{
+    @Override
+    public void makeHead() {
+        System.out.println("Jeep：组装车头！");
+    }
+
+    @Override
+    public void makeBody() {
+        System.out.println("Jeep：组装车身！");
+    }
+
+    @Override
+    public void makeTail() {
+        System.out.println("Jeep：组装车尾！");
+    }
+}
+```
+```java
+public class MainClass {
+    public static void main(String[] args) {
+        MakeCar bus = new MakeBus();
+        bus.make();
+        System.out.println("-------------------");
+        MakeCar jeep = new MakeJeep();
+        jeep.make();
+        System.out.println("-------------------");
+        MakeGame game = new MakeWorld();
+        game.make();
+    }
+}
+```
 
