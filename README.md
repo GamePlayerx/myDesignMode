@@ -2264,9 +2264,106 @@ public class Client { // 客户端角色类
 }
 ```
 
+## 24、访问者模式
 
+### 什么是访问者模式
 
+Visitor模式也叫访问者模式，是行为模式之一，它分离对象的数据和行为，使用Visitor模式，可以不修改已有类的情况下，增加
+新的操作。最复杂的设计模式，并且使用频率不高。很多人对访问者模式的评价：
+**大多情况下，你不需要使用访问者模式，但是 一旦需要使用它时，那就真的需要使用了。**
 
+### 访问者模式的角色
 
+1. 访问者角色（Visitor）：为该对象结构中具体元素角色声明一个访问操作接口。该操作接口的名字和参数标识了发送访问请求给具体访问者的具体元素角色。这样访问者就可以通过该元素角色的特定接口直接访问它。
+2. 具体访问者角色（Concrete Visitor）：实现每个由访问者角色（Visitor）声明的操作。
+3. 元素角色（Element）：定义一个Accept操作，它已一个访问者为参数。
+4. 具体元素角色（Concrete Element）：实现由元素角色提供的Accept操作。
+5. 对象结构角色（Object Structure）：这是使用访问者模式必备的角色。它要具备以下特征：能枚举它的元素；可以提供一个高层的接口以允许该访问者访问它的元素；可以是一个复合（组合模式）或是一个集合，如一个列表或一个无序集合。
 
+实例<br>
+```java
+public interface ComputerPart {
+    public void accept(ComputerPartVisitor computerPartVisitor);
+}
+```
+```java
+public class Keyboard implements ComputerPart{
+    @Override
+    public void accept(ComputerPartVisitor computerPartVisitor) {
+        computerPartVisitor.visit(this);
+    }
+}
+```
+```java
+public class Monitor implements ComputerPart{
+    @Override
+    public void accept(ComputerPartVisitor computerPartVisitor) {
+        computerPartVisitor.visit(this);
+    }
+}
+```
+```java
+public class Mouse implements ComputerPart{
+    @Override
+    public void accept(ComputerPartVisitor computerPartVisitor) {
+        computerPartVisitor.visit(this);
+    }
+}
+```
+```java
+public class Computer implements ComputerPart{
+    ComputerPart[] parts;
+
+    public Computer() {
+        parts = new ComputerPart[] {new Mouse(), new Keyboard(), new Monitor()};
+    }
+
+    @Override
+    public void accept(ComputerPartVisitor computerPartVisitor) {
+        for (int i = 0; i < parts.length; i++) {
+            parts[i].accept(computerPartVisitor);
+        }
+        computerPartVisitor.visit(this);
+    }
+}
+```
+```java
+public interface ComputerPartVisitor {
+    public void visit(Computer computer);
+    public void visit(Mouse mouse);
+    public void visit(Keyboard keyboard);
+    public void visit(Monitor monitor);
+}
+```
+```java
+public class ComputerPartDisplayVisitor implements ComputerPartVisitor{
+    @Override
+    public void visit(Computer computer) {
+        System.out.println("Displaying Computer.");
+    }
+
+    @Override
+    public void visit(Mouse mouse) {
+        System.out.println("Displaying mouse.");
+    }
+
+    @Override
+    public void visit(Keyboard keyboard) {
+        System.out.println("Displaying keyboard.");
+    }
+
+    @Override
+    public void visit(Monitor monitor) {
+        System.out.println("Displaying monitor");
+    }
+}
+```
+```java
+public class MainClass {
+    public static void main(String[] args) {
+        ComputerPart computerPart = new Computer();
+        computerPart.accept(new ComputerPartDisplayVisitor());
+    }
+}
+```
 
