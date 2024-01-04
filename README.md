@@ -2163,23 +2163,106 @@ public class MainClass {
 }
 ```
 
+## 23、命令模式
 
+### 什么是命令模式
 
+Command模式也叫命令模式，是行为设计模式的一种。Command模式通过被称为Command的类封装了对目标对象的调用
+行为以及调用参数。
 
+### 命令模式的应用场景
 
+在面向对象的程序设计中，一个对象调用另一个对象，一般情况下的调用过程是：<br>
+1. 创建目标对象实例
+2. 设置调用参数
+3. 调用目标对象的方法
 
+但在一些情况下有必要使用一个专门的类对这种调用加以封装，我们把这种专门的类称作command类。<br>
++ 整个调用过程比较繁杂，或者存在多处这种调用。这时，使用Command类对该调用加以封装，便于功能的再利用。
++ 调用前后需要对调用参数进行某些处理。
++ 调用前后需要进行某些额外处理，比如日志，缓存，记录历史操作等。
 
+### 命令模式的角色
 
+1. Command：Command抽象类
+2. ConcreteCommand： Command的具体实现类
+3. Receiver：需要被调用的目标对象
+4. Invorker：通过Invorker执行Command对象
 
+实例<br>
+**接收者角色类**<br>
+```java
+public class Receiver { // 接收者角色类
+    // 真正执行命令相应的操作
+    public void action() {
+        System.out.println("执行操作！");
+    }
+}
+```
+**抽象命令角色类**<br>
+```java
+public interface Command { //抽象命令角色类
+    // 执行方法
+    void execute();
+}
+```
+**具体命令角色类**<br>
+```java
+public class ConcreteCommand implements Command{ // 具体命令角色类
+    // 持有相应的接收者对象
+    private Receiver receiver = null;
 
+    /**
+     * 构造方法
+     * @param receiver
+     */
+    public ConcreteCommand(Receiver receiver) {
+        this.receiver = receiver;
+    }
+    @Override
+    public void execute() {
+        //通常会转调接收者的形影方法，让接收者来真正执行功能
+        receiver.action();
+    }
+}
+```
+**请求者角色类**<br>
+```java
+public class Invoker { // 请求者角色类
+    // 持有命令对象
+    private Command command = null;
 
+    /**
+     * 构造方法
+     * @param command
+     */
+    public Invoker(Command command) {
+        this.command = command;
+    }
 
-
-
-
-
-
-
+    /**
+     * 行动方法
+     */
+    public void action() {
+        command.execute();
+    }
+}
+```
+**客户端角色类**<br>
+```java
+public class Client { // 客户端角色类
+    public static void main(String[] args) {
+        // 创建接收者
+        Receiver receiver = new Receiver();
+        // 创建命令对象，设定其接收者
+        Command command = new ConcreteCommand(receiver);
+        // 创建请求者，把命令对象设置进去
+        Invoker invoker = new Invoker(command);
+        // 执行方法
+        invoker.action();
+    }
+}
+```
 
 
 
