@@ -2104,3 +2104,86 @@ public class MainClass {
 }
 ```
 
+## 22、状态模式
+
+### 什么是状态模式
+
+State模式也叫做状态模式，是行为设计模式的一种。State模式允许通过改变对象的内部状态而改变对象的行为，这个对象表现就好像
+修改了它的类一样。
+
+### 状态模式的应用场景
+
+状态模式主要解决的是当控制一个对象状态转换的条件表达式过于复杂时的情况。把状态的判断逻辑转译到表现不同状态的一些列类
+当中，可以把复杂的判断逻辑简化。
+
+### 状态模式的角色
+
++ Context：用户对象拥有一个State类型的成员，以标识对象的当前状态；
++ State：接口或基类封装与Context的特定状态相关的行为；
++ ConcreteState：接口实现类或子类实现了一个与Context某个状态相关的行为。
+
+实例<br>
+```java
+public class Person {
+    private int hour;
+
+    public int getHour() {
+        return hour;
+    }
+    public void setHour(int hour) {
+        this.hour = hour;
+    }
+
+    public void doSomething() {
+        if (hour == 7) {
+            System.out.println("吃早饭！");
+        } else if (hour == 12) {
+            System.out.println("吃午饭！");
+        } else if (hour == 18) {
+            System.out.println("吃晚饭！");
+        } else {
+            System.out.println(hour + "未定义。。。。。。");
+        }
+    }
+}
+```
+```java
+public class MainClass {
+    public static void main(String[] args) {
+        Person person = new Person();
+        person.setHour(7);
+        person.doSomething();
+        person.setHour(12);
+        person.doSomething();
+        person.setHour(18);
+        person.doSomething();
+        person.setHour(14);
+        person.doSomething();
+    }
+}
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
