@@ -2014,3 +2014,93 @@ public class MainClass {
 }
 ```
 
+## 21、备忘录模式
+
+### 什么是备忘录模式
+
+Memento模式也叫备忘录模式，是行为i模式之一，它的作用是保存对象的内部状态，并在需要的时候（undo/rollback）恢复
+对象以前的状态。<br>
+
+### 备忘录模式的应用场景
+
+如果一个对象需要保存状态并可通过undo或rollback等操作恢复到以前的状态时，可以使用Memento模式。<br>
+1. 一个类需要保存它的对象的状态（相当于Originator角色）
+2. 设计一个类，该类只是用来保存上述对象的状态（相当于Memento角色）
+3. 需要的时候，Caretaker角色要求Originator返回一个Memento并加以保存
+4. undo或rollback操作时，通过Caretaker保存的Memento恢复Originator对象的状态
+
+### 备忘录模式的角色
+
++ Originator（原生者）：需要被保存状态以便恢复的那个对象。
++ Memento（备忘录）：该对象由Originator创建，主要用来保存Originator的内部状态。
++ Caretaker（管理者）：负责在适当的时间保存/恢复Originator对象的状态
+
+实例<br>
+```java
+public class Memento {
+    private String state;
+
+    public Memento(String state) {
+        this.state = state;
+    }
+
+    public String getState() {
+        return state;
+    }
+}
+```
+```java
+public class Originator {
+    private String state;
+
+    public void setState(String state) {
+        this.state = state;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public Memento saveStateToMemento() {
+        return new Memento(state);
+    }
+
+    public void getStateFromMemento(Memento memento) {
+        state = memento.getState();
+    }
+}
+```
+```java
+public class CareTaker {
+    private List<Memento> mementoList = new ArrayList<>();
+
+    public void add(Memento state) {
+        mementoList.add(state);
+    }
+
+    public Memento get(int index) {
+        return mementoList.get(index);
+    }
+}
+```
+```java
+public class MainClass {
+    public static void main(String[] args) {
+        Originator originator = new Originator();
+        CareTaker careTaker = new CareTaker();
+        originator.setState("State #1");
+        originator.setState("State #2");
+        careTaker.add(originator.saveStateToMemento());
+        originator.setState("State #3");
+        careTaker.add(originator.saveStateToMemento());
+        originator.setState("State #4");
+
+        System.out.println("Current State: " + originator.getState());
+        originator.getStateFromMemento(careTaker.get(0));
+        System.out.println("First saved State: " + originator.getState());
+        originator.getStateFromMemento(careTaker.get(1));
+        System.out.println("Second saved State: " + originator.getState());
+    }
+}
+```
+
